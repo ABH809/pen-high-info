@@ -11,168 +11,350 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
-      <nav id="navbar">
-        <a href="index.html">
-          <div id="logo"><img src="th-removebg-preview.png" id="logo"></div>
-      </a>
-      <a href="index.html">Home</a>
-      <a href="dates.html">Upcoming dates</a>
-      </nav>
-      <div id="maintext">
-        <h1>Information for Pen-High students</h1>
-      </div>
-      <img src="bell.jpeg" id="bell" style="position: relative; top: 5px">
-        <section class="today-hero">
-          <div class="today-label" id="today-date-label">Today's Event</div>
-          <div id="today-event-content">
-            <h2 class="today-title">Checking schedule...</h2>
-          </div>
-        </section>
-        <script>
-          function toLocalJSDate(icalTime) {
-            if (icalTime.isDate) {
-              return new Date(icalTime.year, icalTime.month - 1, icalTime.day, 0, 0, 0);
+
+      <script>
+        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+          document.body.classList.add("is-mobile");
+        }
+      </script>
+
+      <div class="desktop-only">
+        <nav id="navbar">
+          <a href="index.html">
+            <div id="logo"><img src="th-removebg-preview.png" id="logo"></div>
+        </a>
+        <a href="index.html">Home</a>
+        <a href="dates.html">Upcoming dates</a>
+        </nav>
+        <div id="maintext">
+          <h1>Information for Pen-High students</h1>
+        </div>
+        <img src="bell.jpeg" id="bell" style="position: relative; top: 5px">
+          <section class="today-hero">
+            <div class="today-label" id="today-date-label">Today's Event</div>
+            <div id="today-event-content">
+              <h2 class="today-title">Checking schedule...</h2>
+            </div>
+          </section>
+          <script>
+            function toLocalJSDate(icalTime) {
+              if (icalTime.isDate) {
+                return new Date(icalTime.year, icalTime.month - 1, icalTime.day, 0, 0, 0);
+              }
+              return icalTime.toJSDate();
             }
-            return icalTime.toJSDate();
-          }
-        
-          async function loadTodaysEvent() {
-            const contentBox = document.getElementById('today-event-content');
-            const dateLabel = document.getElementById('today-date-label');
-        
-            // Today's exact boundaries (12:00:00 AM -> 11:59:59 PM)
-            const startOfToday = new Date();
-            startOfToday.setHours(0, 0, 0, 0);
-        
-            const endOfToday = new Date();
-            endOfToday.setHours(23, 59, 59, 999);
-        
-            // Show today's formatted date in the top eyebrow label
-            dateLabel.textContent = `${startOfToday.toLocaleDateString(undefined, {
-              weekday: 'long',
-              month: 'long',
-              day: 'numeric'
-            })}`;
-        
-            try {
-              const response = await fetch('calendar.ics');
-              if (!response.ok) throw new Error('Could not load calendar');
-              const icsText = await response.text();
-        
-              const jcalData = ICAL.parse(icsText);
-              const comp = new ICAL.Component(jcalData);
-        
-              comp.getAllSubcomponents('vtimezone').forEach(vtz => {
-                ICAL.TimezoneService.register(vtz);
-              });
-        
-              const vevents = comp.getAllSubcomponents('vevent');
-              const eventMap = new Map();
-              const exceptions = [];
-        
-              vevents.forEach(vevent => {
-                const event = new ICAL.Event(vevent);
-                if (event.isRecurrenceException()) {
-                  exceptions.push(event);
-                } else {
-                  eventMap.set(event.uid, event);
-                }
-              });
-        
-              exceptions.forEach(ex => {
-                const parent = eventMap.get(ex.uid);
-                if (parent) parent.relateException(ex);
-              });
-        
-              const todaysEvents = [];
-        
-              eventMap.forEach(event => {
-                if (event.isRecurring()) {
-                  const expand = new ICAL.RecurExpansion({
-                    component: event.component,
-                    dtstart: event.startDate
-                  });
-        
-                  let next;
-                  while ((next = expand.next())) {
-                    const occ = event.getOccurrenceDetails(next);
-                    const occStart = toLocalJSDate(occ.startDate);
-                    const occEnd = occ.endDate ? toLocalJSDate(occ.endDate) : occStart;
-        
-                    if (occStart > endOfToday) break;
-        
-                    if (occStart <= endOfToday && (occEnd > startOfToday || occStart >= startOfToday)) {
+          
+            async function loadTodaysEvent() {
+              const contentBox = document.getElementById('today-event-content');
+              const dateLabel = document.getElementById('today-date-label');
+          
+              // Today's exact boundaries (12:00:00 AM -> 11:59:59 PM)
+              const startOfToday = new Date();
+              startOfToday.setHours(0, 0, 0, 0);
+          
+              const endOfToday = new Date();
+              endOfToday.setHours(23, 59, 59, 999);
+          
+              // Show today's formatted date in the top eyebrow label
+              dateLabel.textContent = `${startOfToday.toLocaleDateString(undefined, {
+                weekday: 'long',
+                month: 'long',
+                day: 'numeric'
+              })}`;
+          
+              try {
+                const response = await fetch('calendar.ics');
+                if (!response.ok) throw new Error('Could not load calendar');
+                const icsText = await response.text();
+          
+                const jcalData = ICAL.parse(icsText);
+                const comp = new ICAL.Component(jcalData);
+          
+                comp.getAllSubcomponents('vtimezone').forEach(vtz => {
+                  ICAL.TimezoneService.register(vtz);
+                });
+          
+                const vevents = comp.getAllSubcomponents('vevent');
+                const eventMap = new Map();
+                const exceptions = [];
+          
+                vevents.forEach(vevent => {
+                  const event = new ICAL.Event(vevent);
+                  if (event.isRecurrenceException()) {
+                    exceptions.push(event);
+                  } else {
+                    eventMap.set(event.uid, event);
+                  }
+                });
+          
+                exceptions.forEach(ex => {
+                  const parent = eventMap.get(ex.uid);
+                  if (parent) parent.relateException(ex);
+                });
+          
+                const todaysEvents = [];
+          
+                eventMap.forEach(event => {
+                  if (event.isRecurring()) {
+                    const expand = new ICAL.RecurExpansion({
+                      component: event.component,
+                      dtstart: event.startDate
+                    });
+          
+                    let next;
+                    while ((next = expand.next())) {
+                      const occ = event.getOccurrenceDetails(next);
+                      const occStart = toLocalJSDate(occ.startDate);
+                      const occEnd = occ.endDate ? toLocalJSDate(occ.endDate) : occStart;
+          
+                      if (occStart > endOfToday) break;
+          
+                      if (occStart <= endOfToday && (occEnd > startOfToday || occStart >= startOfToday)) {
+                        todaysEvents.push({
+                          summary: occ.item.summary,
+                          description: occ.item.description,
+                          startDate: occStart,
+                          endDate: occEnd,
+                          isAllDay: occ.startDate.isDate
+                        });
+                      }
+                    }
+                  } else {
+                    const eventStart = toLocalJSDate(event.startDate);
+                    const eventEnd = event.endDate ? toLocalJSDate(event.endDate) : eventStart;
+          
+                    if (eventStart <= endOfToday && (eventEnd > startOfToday || eventStart >= startOfToday)) {
                       todaysEvents.push({
-                        summary: occ.item.summary,
-                        description: occ.item.description,
-                        startDate: occStart,
-                        endDate: occEnd,
-                        isAllDay: occ.startDate.isDate
+                        summary: event.summary,
+                        description: event.description,
+                        startDate: eventStart,
+                        endDate: eventEnd,
+                        isAllDay: event.startDate.isDate
                       });
                     }
                   }
-                } else {
-                  const eventStart = toLocalJSDate(event.startDate);
-                  const eventEnd = event.endDate ? toLocalJSDate(event.endDate) : eventStart;
-        
-                  if (eventStart <= endOfToday && (eventEnd > startOfToday || eventStart >= startOfToday)) {
-                    todaysEvents.push({
-                      summary: event.summary,
-                      description: event.description,
-                      startDate: eventStart,
-                      endDate: eventEnd,
-                      isAllDay: event.startDate.isDate
-                    });
+                });
+          
+                // Sort chronologically if there are multiple events today
+                todaysEvents.sort((a, b) => a.startDate - b.startDate);
+          
+                if (todaysEvents.length === 0) {
+                  contentBox.innerHTML = `
+                    <h2 class="today-title">No Events Scheduled Today</h2>
+                    <p class="today-desc">Check the full calendar for upcoming dates.</p>
+                  `;
+                  return;
+                }
+          
+                // Render today's event(s) in big typography
+                contentBox.innerHTML = todaysEvents.map(ev => {
+                  let timeText = 'All Day';
+                  if (!ev.isAllDay) {
+                    const startStr = ev.startDate.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+                    const endStr = ev.endDate.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+                    timeText = startStr === endStr ? startStr : `${startStr} – ${endStr}`;
                   }
-                }
-              });
-        
-              // Sort chronologically if there are multiple events today
-              todaysEvents.sort((a, b) => a.startDate - b.startDate);
-        
-              if (todaysEvents.length === 0) {
-                contentBox.innerHTML = `
-                  <h2 class="today-title">No Events Scheduled Today</h2>
-                  <p class="today-desc">Check the full calendar for upcoming dates.</p>
-                `;
-                return;
+          
+                  return `
+                    <div class="today-event-item">
+                      <h2 class="today-title">${ev.summary || 'Untitled Event'}</h2>
+                      <div class="today-time">${timeText}</div>
+                      ${ev.description ? `<p class="today-desc">${ev.description}</p>` : ''}
+                    </div>
+                  `;
+                }).join('');
+          
+              } catch (error) {
+                contentBox.innerHTML = `<p style="color: #f87171;">Error: ${error.message}</p>`;
               }
-        
-              // Render today's event(s) in big typography
-              contentBox.innerHTML = todaysEvents.map(ev => {
-                let timeText = 'All Day';
-                if (!ev.isAllDay) {
-                  const startStr = ev.startDate.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-                  const endStr = ev.endDate.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-                  timeText = startStr === endStr ? startStr : `${startStr} – ${endStr}`;
-                }
-        
-                return `
-                  <div class="today-event-item">
-                    <h2 class="today-title">${ev.summary || 'Untitled Event'}</h2>
-                    <div class="today-time">${timeText}</div>
-                    ${ev.description ? `<p class="today-desc">${ev.description}</p>` : ''}
-                  </div>
-                `;
-              }).join('');
-        
-            } catch (error) {
-              contentBox.innerHTML = `<p style="color: #f87171;">Error: ${error.message}</p>`;
             }
-          }
-          loadTodaysEvent();
-        </script>
+            loadTodaysEvent();
+          </script>
+          <div id="maintext">
+            <h2>Some useful links</h2>
+          <button onclick="window.location.href='https://pentictonsecondary.sd67.bc.ca/';">Pen High Website</button>
+          <button onclick="window.location.href='https://pentictonsecondary.sd67.bc.ca/apps/search/';">Pen High Search Portal</button>
+          <button onclick="window.location.href='https://pentictonsecondary.sd67.bc.ca/apps/pages/index.jsp?uREC_ID=1100381&type=d&pREC_ID=1376130';">Pen High Daily Bulletin</button>
+          <button onclick="window.location.href='https://pentictonsecondary.sd67.bc.ca/apps/pages/index.jsp?uREC_ID=1100381&type=d&pREC_ID=1376131';">Pen High Cafeteria Menu</button>
+          <br>
+          <br>
+          <br>
+          <h1>Penticton Secondary News</h1>
+          </div>
+    <div id="rss-container"><script src="//rss.bloople.net/?url=https%3A%2F%2Ffetchrss.com%2Ffeed%2F1xWRJj2gkEIk1xWRFv2NcDJ4.rss&limit=10&showtitle=false&type=js"></script></div>
+      </div>
+
+      <div class="mobile-only">
+        <nav id="navbar">
+          <a href="index.html">
+            <div id="logo"><img src="th-removebg-preview.png" id="logo"></div>
+        </a>
+        <a href="index.html">Home</a>
+        <a href="dates.html">Upcoming dates</a>
+        </nav>
         <div id="maintext">
-          <h2>Some useful links</h2>
-        <button onclick="window.location.href='https://pentictonsecondary.sd67.bc.ca/';">Pen High Website</button>
-        <button onclick="window.location.href='https://pentictonsecondary.sd67.bc.ca/apps/search/';">Pen High Search Portal</button>
-        <button onclick="window.location.href='https://pentictonsecondary.sd67.bc.ca/apps/pages/index.jsp?uREC_ID=1100381&type=d&pREC_ID=1376130';">Pen High Daily Bulletin</button>
-        <button onclick="window.location.href='https://pentictonsecondary.sd67.bc.ca/apps/pages/index.jsp?uREC_ID=1100381&type=d&pREC_ID=1376131';">Pen High Cafeteria Menu</button>
-        <br>
-        <br>
-        <br>
-        <h1>Penticton Secondary News</h1>
+          <h1>Information for Pen-High students</h1>
         </div>
-  <div id="rss-container"><script src="//rss.bloople.net/?url=https%3A%2F%2Ffetchrss.com%2Ffeed%2F1xWRJj2gkEIk1xWRFv2NcDJ4.rss&limit=10&showtitle=false&type=js"></script></div>
+          <section class="today-hero">
+            <div class="today-label" id="today-date-label">Today's Event</div>
+            <div id="today-event-content">
+              <h2 class="today-title">Checking schedule...</h2>
+            </div>
+          </section>
+          <script>
+            function toLocalJSDate(icalTime) {
+              if (icalTime.isDate) {
+                return new Date(icalTime.year, icalTime.month - 1, icalTime.day, 0, 0, 0);
+              }
+              return icalTime.toJSDate();
+            }
+          
+            async function loadTodaysEvent() {
+              const contentBox = document.getElementById('today-event-content');
+              const dateLabel = document.getElementById('today-date-label');
+          
+              // Today's exact boundaries (12:00:00 AM -> 11:59:59 PM)
+              const startOfToday = new Date();
+              startOfToday.setHours(0, 0, 0, 0);
+          
+              const endOfToday = new Date();
+              endOfToday.setHours(23, 59, 59, 999);
+          
+              // Show today's formatted date in the top eyebrow label
+              dateLabel.textContent = `${startOfToday.toLocaleDateString(undefined, {
+                weekday: 'long',
+                month: 'long',
+                day: 'numeric'
+              })}`;
+          
+              try {
+                const response = await fetch('calendar.ics');
+                if (!response.ok) throw new Error('Could not load calendar');
+                const icsText = await response.text();
+          
+                const jcalData = ICAL.parse(icsText);
+                const comp = new ICAL.Component(jcalData);
+          
+                comp.getAllSubcomponents('vtimezone').forEach(vtz => {
+                  ICAL.TimezoneService.register(vtz);
+                });
+          
+                const vevents = comp.getAllSubcomponents('vevent');
+                const eventMap = new Map();
+                const exceptions = [];
+          
+                vevents.forEach(vevent => {
+                  const event = new ICAL.Event(vevent);
+                  if (event.isRecurrenceException()) {
+                    exceptions.push(event);
+                  } else {
+                    eventMap.set(event.uid, event);
+                  }
+                });
+          
+                exceptions.forEach(ex => {
+                  const parent = eventMap.get(ex.uid);
+                  if (parent) parent.relateException(ex);
+                });
+          
+                const todaysEvents = [];
+          
+                eventMap.forEach(event => {
+                  if (event.isRecurring()) {
+                    const expand = new ICAL.RecurExpansion({
+                      component: event.component,
+                      dtstart: event.startDate
+                    });
+          
+                    let next;
+                    while ((next = expand.next())) {
+                      const occ = event.getOccurrenceDetails(next);
+                      const occStart = toLocalJSDate(occ.startDate);
+                      const occEnd = occ.endDate ? toLocalJSDate(occ.endDate) : occStart;
+          
+                      if (occStart > endOfToday) break;
+          
+                      if (occStart <= endOfToday && (occEnd > startOfToday || occStart >= startOfToday)) {
+                        todaysEvents.push({
+                          summary: occ.item.summary,
+                          description: occ.item.description,
+                          startDate: occStart,
+                          endDate: occEnd,
+                          isAllDay: occ.startDate.isDate
+                        });
+                      }
+                    }
+                  } else {
+                    const eventStart = toLocalJSDate(event.startDate);
+                    const eventEnd = event.endDate ? toLocalJSDate(event.endDate) : eventStart;
+          
+                    if (eventStart <= endOfToday && (eventEnd > startOfToday || eventStart >= startOfToday)) {
+                      todaysEvents.push({
+                        summary: event.summary,
+                        description: event.description,
+                        startDate: eventStart,
+                        endDate: eventEnd,
+                        isAllDay: event.startDate.isDate
+                      });
+                    }
+                  }
+                });
+          
+                // Sort chronologically if there are multiple events today
+                todaysEvents.sort((a, b) => a.startDate - b.startDate);
+          
+                if (todaysEvents.length === 0) {
+                  contentBox.innerHTML = `
+                    <h2 class="today-title">No Events Scheduled Today</h2>
+                    <p class="today-desc">Check the full calendar for upcoming dates.</p>
+                  `;
+                  return;
+                }
+          
+                // Render today's event(s) in big typography
+                contentBox.innerHTML = todaysEvents.map(ev => {
+                  let timeText = 'All Day';
+                  if (!ev.isAllDay) {
+                    const startStr = ev.startDate.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+                    const endStr = ev.endDate.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+                    timeText = startStr === endStr ? startStr : `${startStr} – ${endStr}`;
+                  }
+          
+                  return `
+                    <div class="today-event-item">
+                      <h2 class="today-title">${ev.summary || 'Untitled Event'}</h2>
+                      <div class="today-time">${timeText}</div>
+                      ${ev.description ? `<p class="today-desc">${ev.description}</p>` : ''}
+                    </div>
+                  `;
+                }).join('');
+          
+              } catch (error) {
+                contentBox.innerHTML = `<p style="color: #f87171;">Error: ${error.message}</p>`;
+              }
+            }
+            loadTodaysEvent();
+          </script>
+          <br>
+           <img src="bell.jpeg" id="bell" style="position: relative; top: 5px">
+           <br>
+          <div id="maintext">
+            <h2>Some useful links</h2>
+          <button onclick="window.location.href='https://pentictonsecondary.sd67.bc.ca/';">Pen High Website</button>
+          <br>
+          <br>
+          <button onclick="window.location.href='https://pentictonsecondary.sd67.bc.ca/apps/search/';">Pen High Search Portal</button>
+          <button onclick="window.location.href='https://pentictonsecondary.sd67.bc.ca/apps/pages/index.jsp?uREC_ID=1100381&type=d&pREC_ID=1376130';">Pen High Daily Bulletin</button>
+          <br>
+          <br>
+          <button onclick="window.location.href='https://pentictonsecondary.sd67.bc.ca/apps/pages/index.jsp?uREC_ID=1100381&type=d&pREC_ID=1376131';">Pen High Cafeteria Menu</button>
+          <br>
+          <br>
+          <br>
+          <h1>Penticton Secondary News</h1>
+          </div>
+    <div id="rss-container"><script src="//rss.bloople.net/?url=https%3A%2F%2Ffetchrss.com%2Ffeed%2F1xWRJj2gkEIk1xWRFv2NcDJ4.rss&limit=10&showtitle=false&type=js"></script></div>
+      </div>
+      
   </body>
 </html>

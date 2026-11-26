@@ -1,3 +1,10 @@
+.mobile-only {
+  display: none; 
+}
+.desktop-only {
+  display: block;
+}
+
 body { 
     font-family: Montserrat; 
     background: #f5d3ec;
@@ -58,6 +65,17 @@ body {
         border: 10px solid rgb(8, 8, 8);
         background-color: #ffffff;
         margin-left: 16.1%;
+    
+      }
+
+      body.is-mobile .today-hero {
+        color: #030303;
+        padding: 40px 30px;
+        border-radius: 12px;
+        max-width: 800px;
+        margin: 30px auto;
+        border: 10px solid rgb(8, 8, 8);
+        background-color: #ffffff;
     
       }
       .today-label {
@@ -141,4 +159,13 @@ body {
       float: right;
       border:#000000 10px solid;
       margin-right: 16.1%;
+    }
+
+    body.is-mobile #bell{
+      width: 500px;
+      border-radius: 10px;
+      float: right;
+      border:#000000 10px solid;
+      margin: left auto;
+      margin: right auto;
     }
