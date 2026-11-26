@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="style.css" />
+        <link rel="icon" type="image/x-icon" href="th-removebg-preview.png">
+        <title>Daily Pen-High Information</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,500;1,500&display=swap" rel="stylesheet">
+        <script src="https://unpkg.com/ical.js/dist/ical.es5.min.cjs"></script>
+    </head>
+    <body>
+        <nav id="navbar">
+            <a href="index.html">
+              <img src="th-removebg-preview.png" id="logo">
+          </a>
+          <a href="index.html">Home</a>
+          <a href="dates.html">Upcoming dates</a>
+          </nav>
+          <div id="maintext">
+            <h1>Upcoming Events:</h1>
+          </div>
+        <div id="events-container"><h1>Loading events...</h1></div>
+
+  <script>
+    // Helper: converts ICAL.Time to a clean local JS Date without timezone drift
+  function toLocalJSDate(icalTime) {
+    if (icalTime.isDate) {
+      return new Date(icalTime.year, icalTime.month - 1, icalTime.day, 0, 0, 0);
+    }
+    return icalTime.toJSDate();
+  }
+
+  async function displayICS() {
+    const container = document.getElementById('events-container');
+
+    try {
+      const response = await fetch('calendar.ics');
+      if (!response.ok) throw new Error('Could not load the .ics file');
+      const icsText = await response.text();
+
+      const jcalData = ICAL.parse(icsText);
+      const comp = new ICAL.Component(jcalData);
+      const vevents = comp.getAllSubcomponents('vevent');
+
+      // 1. Set window: Start of today -> End of 10th day from now
+      const now = new Date();
+      now.setHours(0, 0, 0, 0);
+
+      const tenDaysFromNow = new Date(now);
+      tenDaysFromNow.setDate(now.getDate() + 20);
+      tenDaysFromNow.setHours(23, 59, 59, 999);
+
+      const upcomingEvents = [];
+
+      // 2. Loop through events
+      vevents.forEach(vevent => {
+        const event = new ICAL.Event(vevent);
+
+        if (event.isRecurring()) {
+          const expand = event.iterator();
+          let next;
+          while ((next = expand.next())) {
+            const occurrenceDate = toLocalJSDate(next);
+            if (occurrenceDate > tenDaysFromNow) break;
+
+            if (occurrenceDate >= now) {
+              upcomingEvents.push({
+                summary: event.summary,
+                description: event.description,
+                startDate: occurrenceDate,
+                isAllDay: event.startDate.isDate
+              });
+            }
+          }
+        } else {
+          const eventStart = toLocalJSDate(event.startDate);
+          const eventEnd = event.endDate ? toLocalJSDate(event.endDate) : eventStart;
+
+          // Use strictly greater (>) on eventEnd so yesterday's all-day events are excluded
+          if (eventStart <= tenDaysFromNow && eventEnd > now) {
+            upcomingEvents.push({
+              summary: event.summary,
+              description: event.description,
+              startDate: eventStart,
+              isAllDay: event.startDate.isDate
+            });
+          }
+        }
+      });
+
+      // 3. Sort chronologically
+      upcomingEvents.sort((a, b) => a.startDate - b.startDate);
+
+      container.innerHTML = '';
+
+      if (upcomingEvents.length === 0) {
+        container.innerHTML = '<h1>No upcoming events in the next 10 days.</h1>';
+        return;
+      }
+
+      // 4. Render to HTML
+      upcomingEvents.forEach(event => {
+        const formattedDate = event.isAllDay
+          ? `${event.startDate.toLocaleDateString()} (All Day)`
+          : event.startDate.toLocaleString();
+
+        const card = document.createElement('div');
+        card.className = 'event-card';
+        card.innerHTML = `
+          <div class="event-title">${event.summary || 'Untitled Event'}</div>
+          <div class="event-date">${formattedDate}</div>
+          <h1>${event.description || ''}</h1>
+        `;
+        container.appendChild(card);
+      });
+
+    } catch (error) {
+      container.innerHTML = `<h1 style="color: red;">Error: ${error.message}</h1>`;
+    }
+  }
+
+  displayICS();
+  </script>
+  </body>
+  </html>

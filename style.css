@@ -1,0 +1,129 @@
+body { 
+    font-family: Montserrat; 
+    background: #f5d3ec;
+    color: #000000;
+    border: 8px solid gold;
+    }
+    .event-card {  
+        padding: 15px; margin-bottom: 10px; 
+        border-radius: 6px; 
+        border: 4px solid #000000;
+        margin: 6px;
+        float: left;
+    }
+    .event-title { 
+        font-weight: bold; 
+        font-size: 28px; 
+    }
+    .event-date { 
+        color: #555;
+        font-size: 20px;
+        margin-top: 4px; 
+    }
+
+    button {
+        padding: 10px 24px;
+        font-size: 16px;
+        font-weight: 550;
+        background-color: #1C39BB;
+        color: #ffffff;
+        border: none;
+        border-radius: 6px;
+        width: 250px;
+      }
+
+      #navbar{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 2rem;
+        gap: 25px;
+        background-image: linear-gradient(to right, rgb(179, 0, 179), rgb(255, 145, 0), rgb(179, 0, 179));
+        font-size: 20px;
+        border-radius: 20px;
+    }
+
+    img{
+        width: 100px;
+        border-radius: 10px;
+    }
+
+    .today-hero {
+        color: #030303;
+        padding: 40px 30px;
+        border-radius: 12px;
+        max-width: 800px;
+        margin: 30px auto;
+        border: 10px solid rgb(8, 8, 8);
+    
+      }
+      .today-label {
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #000000;
+        margin-bottom: 10px;
+        
+      }
+      .today-event-item {
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid rgba(255, 255, 255, 0.15);
+      }
+      .today-event-item:first-of-type {
+        margin-top: 0;
+        padding-top: 0;
+        border-top: none;
+      }
+      .today-title {
+        font-size: 2.2rem;
+        font-weight: 800;
+        margin: 0 0 8px 0;
+        line-height: 1.2;
+      }
+      .today-time {
+        font-size: 1.15rem;
+        color: #000000;
+        margin: 0 0 12px 0;
+      }
+      .today-desc {
+        font-size: 1rem;
+        color: #94a3b8;
+        margin: 0;
+      }
+      .calendar-link {
+        display: inline-block;
+        margin-top: 25px;
+        color: #38bdf8;
+        text-decoration: none;
+        font-weight: 600;
+      }
+      .calendar-link:hover {
+        text-decoration: underline;
+      }
+
+      a{
+        color: rgb(0, 132, 255);
+        text-shadow: 1px 1px 2px rgb(255, 255, 255);
+        text-shadow: -1px -1px -2px rgb(255, 255, 255);
+      }
+
+      a:hover {
+        color: rgb(255, 51, 0);
+        text-shadow: 1px 1px 2px rgb(255, 255, 255);
+        text-shadow: -1px -1px -2px rgb(255, 255, 255);
+      }
+
+      #rss-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      border: 10px solid rgb(8, 8, 8);
+      border-radius: 12px;
+  
+    }
+
+    #maintext {
+      margin: 16px;
+    }
