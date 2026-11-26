@@ -57,7 +57,7 @@ body {
         margin: 30px auto;
         border: 10px solid rgb(8, 8, 8);
         background-color: #ffffff;
-        margin-left: 300px;
+        margin-left: 16.1%;
     
       }
       .today-label {
@@ -140,5 +140,5 @@ body {
       border-radius: 10px;
       float: right;
       border:#000000 10px solid;
-      margin-right: 300px;
+      margin-right: 16.1%;
     }
