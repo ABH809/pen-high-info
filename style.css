@@ -1,171 +1,223 @@
-.mobile-only {
-  display: none; 
-}
-.desktop-only {
-  display: block;
+/* Global Box-Sizing & Base Styles */
+* {
+  box-sizing: border-box;
 }
 
-body { 
-    font-family: Montserrat; 
-    background: #f5d3ec;
-    color: #000000;
-    border: 8px solid gold;
-    }
-    .event-card {  
-        padding: 15px; margin-bottom: 10px; 
-        border-radius: 6px; 
-        border: 4px solid #000000;
-        margin: 6px;
-        float: left;
-    }
-    .event-title { 
-        font-weight: bold; 
-        font-size: 28px; 
-    }
-    .event-date { 
-        color: #555;
-        font-size: 20px;
-        margin-top: 4px; 
-    }
+body {
+  font-family: 'Montserrat', sans-serif;
+  background: #f5d3ec;
+  color: #000000;
+  border: 8px solid gold;
+  margin: 0;
+  padding: 15px;
+  min-height: 100vh;
+}
 
-    button {
-        padding: 10px 24px;
-        font-size: 16px;
-        font-weight: 550;
-        background-color: #1C39BB;
-        color: #ffffff;
-        border: none;
-        border-radius: 6px;
-        width: 300px;
-        margin-right: 155px;
-      }
+/* Navbar */
+#navbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  gap: 15px;
+  background-image: linear-gradient(to right, rgb(179, 0, 179), rgb(255, 145, 0), rgb(179, 0, 179));
+  font-size: 20px;
+  border-radius: 20px;
+}
 
-      #navbar{
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 1rem 2rem;
-        gap: 25px;
-        background-image: linear-gradient(to right, rgb(179, 0, 179), rgb(255, 145, 0), rgb(179, 0, 179));
-        font-size: 20px;
-        border-radius: 20px;
-    }
+#logo {
+  width: 100px;
+  max-width: 100%;
+  border-radius: 10px;
+}
 
-    #logo{
-        width: 100px;
-        border-radius: 10px;
-    }
+/* Main Content Container */
+#maintext {
+  width: 92%;
+  max-width: 1600px;
+  margin: 20px auto;
+  padding: 0 10px;
+}
+/* Hero & Bell Schedule Section (Side-by-side on desktop, stacked on mobile) */
+.hero-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: stretch;
+  gap: 30px;
+  margin: 30px 0;
+}
 
-    .today-hero {
-        color: #030303;
-        padding: 40px 30px;
-        border-radius: 12px;
-        max-width: 600px;
-        margin: 30px auto;
-        border: 10px solid rgb(8, 8, 8);
-        background-color: #ffffff;
-        margin-left: 16.1%;
-    
-      }
+.today-hero {
+  flex: 1 1 320px;
+  color: #030303;
+  padding: 30px 35px;
+  border-radius: 12px;
+  border: 8px solid rgb(8, 8, 8);
+  background-color: #ffffff;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
 
-      body.is-mobile .today-hero {
-        color: #030303;
-        padding: 40px 30px;
-        border-radius: 12px;
-        max-width: 800px;
-        margin: 30px auto;
-        border: 10px solid rgb(8, 8, 8);
-        background-color: #ffffff;
-    
-      }
-      .today-label {
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
-        font-size: 0.85rem;
-        font-weight: 700;
-        color: #000000;
-        margin-bottom: 10px;
-        
-      }
-      .today-event-item {
-        margin-top: 15px;
-        padding-top: 15px;
-        border-top: 1px solid rgba(255, 255, 255, 0.15);
-      }
-      .today-event-item:first-of-type {
-        margin-top: 0;
-        padding-top: 0;
-        border-top: none;
-      }
-      .today-title {
-        font-size: 2.2rem;
-        font-weight: 800;
-        margin: 0 0 8px 0;
-        line-height: 1.2;
-      }
-      .today-time {
-        font-size: 1.15rem;
-        color: #000000;
-        margin: 0 0 12px 0;
-      }
-      .today-desc {
-        font-size: 1rem;
-        color: #94a3b8;
-        margin: 0;
-      }
-      .calendar-link {
-        display: inline-block;
-        margin-top: 25px;
-        color: #38bdf8;
-        text-decoration: none;
-        font-weight: 600;
-      }
-      .calendar-link:hover {
-        text-decoration: underline;
-      }
+#bell {
+  flex: 1.4 1 380px;
+  width: 100%;
+  max-height: 290px;
+  object-fit: contain;
+  border-radius: 12px;
+  border: 8px solid #000000;
+  background-color: #ffffff;
+  padding: 10px;
+  margin: 0;
+}
 
-      a{
-        color: rgb(0, 132, 255);
-        text-shadow: 1px 1px 2px rgb(255, 255, 255);
-        text-shadow: -1px -1px -2px rgb(255, 255, 255);
-      }
+.today-label {
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #000000;
+  margin-bottom: 10px;
+}
 
-      a:hover {
-        color: rgb(255, 51, 0);
-        text-shadow: 1px 1px 2px rgb(255, 255, 255);
-        text-shadow: -1px -1px -2px rgb(255, 255, 255);
-      }
+.today-event-item {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid rgba(0, 0, 0, 0.15);
+}
 
-      button:hover{
-        background-color:rgb(255, 51, 0);
-      }
+.today-event-item:first-of-type {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
 
-      #rss-container {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 20px;
-      border: 10px solid rgb(8, 8, 8);
-      border-radius: 12px;
-  
-    }
+.today-title {
+  font-size: clamp(2rem, 4.5vw, 3.2rem);
+  font-weight: 800;
+  margin: 0 0 8px 0;
+  line-height: 1.15;
+}
 
-    #maintext {
-      margin: 16px;
-    }
+.today-time {
+  font-size: 1.35rem;
+  color: #000000;
+  margin: 0 0 10px 0;
+}
 
-    #bell{
-      width: 500px;
-      border-radius: 10px;
-      float: right;
-      border:#000000 10px solid;
-      margin-right: 16.1%;
-    }
+.today-desc {
+  font-size: 1rem;
+  color: #555555;
+  margin: 0;
+}
 
-    body.is-mobile #bell{
-      width: 500px;
-      border-radius: 10px;
-      float: right;
-      border:#000000 10px solid;
-      margin: left auto;
-      margin: right auto;
-    }
+/* Useful Links Button Grid */
+.links-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 15px;
+  margin: 20px 0 40px 0;
+}
+
+button {
+  width: 100%;
+  padding: 14px 20px;
+  font-size: 16px;
+  font-weight: 600;
+  background-color: #1C39BB;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin: 0;
+}
+
+button:hover {
+  background-color: rgb(255, 51, 0);
+}
+
+/* Upcoming Events Grid (For dates.html) */
+.events-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.event-card {
+  padding: 15px;
+  border-radius: 6px;
+  border: 4px solid #000000;
+  background-color: rgba(255, 255, 255, 0.4);
+  margin: 0;
+}
+
+.event-title {
+  font-weight: bold;
+  font-size: clamp(20px, 2.5vw, 28px);
+}
+
+.event-date {
+  color: #555;
+  font-size: 18px;
+  margin-top: 6px;
+}
+
+/* RSS / News Container */
+#rss-container {
+  width: 100%;
+  max-width: none;
+  margin: 20px 0;
+  padding: 25px 30px;
+  border: 10px solid rgb(8, 8, 8);
+  border-radius: 12px;
+  background-color: #ffffff;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+/* Links */
+a {
+  color: rgb(0, 132, 255);
+  text-shadow: 1px 1px 2px rgb(255, 255, 255), -1px -1px 2px rgb(255, 255, 255);
+}
+
+a:hover {
+  color: rgb(255, 51, 0);
+}
+
+.calendar-link {
+  display: inline-block;
+  margin-top: 25px;
+  color: #38bdf8;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.calendar-link:hover {
+  text-decoration: underline;
+}
+
+/* Mobile-Specific Adjustments */
+@media (max-width: 768px) {
+  body {
+    border-width: 5px;
+    padding: 10px;
+  }
+
+  #navbar {
+    flex-direction: column;
+    text-align: center;
+    padding: 1rem;
+  }
+
+  .today-hero,
+  #bell,
+  #rss-container {
+    border-width: 6px;
+    padding: 20px 15px;
+  }
+}
